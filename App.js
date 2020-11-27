@@ -1,9 +1,10 @@
-import * as React from 'react';
-import {View, Text, TouchableOpacity} from 'react-native';
+import React, {useState} from 'react';
+import {View, Text, TouchableOpacity, StyleSheet, Animated} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import Icon from 'react-native-vector-icons/FontAwesome5';
-import Animated from 'react-native-reanimated';
+import {useEffect} from 'react';
+
 function HomeScreen() {
   return (
     <View
@@ -59,6 +60,19 @@ function UserScreen() {
 }
 
 function MyTabBar({state, descriptors, navigation}) {
+  const move = new Animated.Value(0);
+  const Inter = new Animated.Value(0);
+
+  const [endvalue, setEndValue] = useState(2);
+  useEffect(() => {
+    Animated.spring(move, {
+      toValue: endvalue,
+      friction: 1,
+      useNativeDriver: true,
+    }).start();
+  }, [move]);
+  console.log(move);
+  console.log(endvalue);
   return (
     <View
       style={{
@@ -97,6 +111,8 @@ function MyTabBar({state, descriptors, navigation}) {
 
         return (
           <TouchableOpacity
+            key={index}
+            activeOpacity={0.5}
             accessibilityRole="button"
             accessibilityState={isFocused ? {selected: true} : {}}
             accessibilityLabel={options.tabBarAccessibilityLabel}
@@ -112,12 +128,22 @@ function MyTabBar({state, descriptors, navigation}) {
             }}>
             <View style={{alignItems: 'center', justifyContent: 'center'}}>
               <Animated.View
-                style={{
-                  backgroundColor: isFocused ? '#673ab7' : '#fff',
-                  height: 4,
-                  width: 60,
-                  borderRadius: 50,
-                }}
+                style={[
+                  styles.Animated,
+                  {backgroundColor: isFocused ? '#673ab7' : '#fff'},
+                  {
+                    transform: [
+                      {
+                        translateX: isFocused
+                          ? move.interpolate({
+                              inputRange: [0, 80],
+                              outputRange: [0, -50],
+                            })
+                          : move,
+                      },
+                    ],
+                  },
+                ]}
               />
               <Icon
                 name={`${label}`}
@@ -150,3 +176,10 @@ export default function App() {
     </NavigationContainer>
   );
 }
+const styles = StyleSheet.create({
+  Animated: {
+    height: 4,
+    width: 60,
+    borderRadius: 50,
+  },
+});
