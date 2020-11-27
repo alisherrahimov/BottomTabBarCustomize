@@ -126,7 +126,11 @@ function MyTabBar({state, descriptors, navigation}) {
               justifyContent: 'space-between',
               backgroundColor: '#fff',
             }}>
-            <View style={{alignItems: 'center', justifyContent: 'center'}}>
+            <View
+              style={{
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}>
               <Animated.View
                 style={[
                   styles.Animated,
